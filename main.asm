@@ -29,40 +29,40 @@ numListElements:
 		.byte 20
                                             
 		.text
-	clr.b R4
-	clr.b R5
-	clr.b R6
-	clr.b R7
-	clr.b R8
-	mov.b #-1, R4
-
-next:
-	tst.b R4
-	jz    end
-	mov.b #0, R7
-	mov.b #1, R8
-	mov.b #0, R4
+	clr.b R4		;set R4 to 0x00
+	clr.b R5		;set R5 to 0x00
+	clr.b R6		;set R5 to 0x00
+	clr.b R7		;set R5 to 0x00
+	clr.b R8		;set R5 to 0x00
+	mov.b #-1, R4	;move 0xFF to R4
 
 sort:
-	mov.b @R7(List), R5
-	mov.b @R8(List), R6
-	cmp.b R5, R6
-	jge   incNums
+	tst.b R4		;test if R4 is 0
+	jz    end		;if R4 is 0 then jump to the end, the list is sorted
+	mov.b #0, R7	;move 0x00 to R7, this will serve as index 1
+	mov.b #1, R8	;move 0x01 to R8, this will serve as index 2
+	mov.b #0, R4	;move 0x00 to R4, this will count the number of swaps though the list
+
+next:
+	mov.b @R7(List), R5		;move the element in the list corresponding to the index in R7 to R5
+	mov.b @R8(List), R6		;move the element in the list corresponding to the index in R8 to R6
+	cmp.b R5, R6			;compare list element i to i+1
+	jge   incNums			;if R6 is larger or equal to R5 then we jump to incrementing the indexes, no swaps are made
 
 swapNums:
-	mov.b R6, @R7(List)
-	mov.b R5, @R8(List)
-	inc.b R4
+	mov.b R6, @R7(List)		;swap the elements of the list, i -> i+1
+	mov.b R5, @R8(List)		;swap the elements of the list, i+1 -> i
+	inc.b R4				;add one to the count of swaps
 
 incNums:
-	inc.b R7
-	inc.b R8
-	cmp.b R8, numListElements
-	jz    next
-	jmp   sort
+	inc.b R7				;increment index 1
+	inc.b R8				;increment index 2
+	cmp.b R8, numListElements	;compare index 2 to the total number of elements in the list
+	jz    sort				;if it is 0 then we have reached the end of the list and jump back to the beginning
+	jmp   next				;if we have not reached the end of the list, then we continue to compare the next two elements
 
 end:
-	NOP
+	NOP						;end of program
 ;-------------------------------------------------------------------------------
 ; Stack Pointer definition
 ;-------------------------------------------------------------------------------
